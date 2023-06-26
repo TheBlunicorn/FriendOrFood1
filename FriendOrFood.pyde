@@ -1,5 +1,24 @@
+
+
+objects = []
+    
+def setup():
+    global objects
+    size(500, 500)
+    fill(0)
+    noStroke()
+    
+    objects.append(Object())
+    
+def draw():
+    background(255)
+    global objects
+
+    for obj in objects:
+        circle(obj.x,obj.y,50)
+    
 class Object:
-    def __init__(self, x = 50, y = 50, name = 'none', creature = None):
+    def __init__(self, x = 100, y = 50, name = 'none', creature = None):
         self.x = x
         self.y = y
         self.name = name
@@ -13,22 +32,3 @@ class Creature:
         self.target = target
         
     
-
-
-
-
-def setup() :
-    objects = []
-    size(500, 500)
-    background(255)
-    
-    owo = Creature()
-    obj = Object(creature = owo)
-    objects.append(obj)
-    
-def draw():
-    background(255)
-    
-    for obj in objects:
-        fill(0)
-        circle(obj.x,obj.y,obj.creature.size)
