@@ -1,11 +1,11 @@
-WIDTH = 700
-HEIGHT = 700
-FOODAMOUNT = 50
+WIDTH = 1600
+HEIGHT = 1000
+FOODAMOUNT = 6
 MAXOBJECTS = 200
-HEALTH = 2000
+HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 700
+FOODINTERVAL = 50
 
 
 objects = []
@@ -38,7 +38,7 @@ def draw():
             obj.creature.take_turn()
     if AUTOFOOD == True:
         counter +=1
-        if counter >= FOODINTERVAL:
+        if counter >= FOODINTERVAL and len(objects) < MAXOBJECTS:
             place_food()
             counter = 0
         
@@ -46,6 +46,8 @@ def mouseClicked():
     place_food()
         
 def place_food(amount = FOODAMOUNT):
+    if len(objects) >= MAXOBJECTS:
+        return
     i = 0
     while i <= amount:
         if i <= amount/2:
@@ -110,7 +112,7 @@ class Creature:
                     self.find_target()
                     if self.check_attribute('chilling'):
                         self.health += int(self.energy_loss/2)
-                        energy = energy/2
+                        energy = energy*2/3
                         speedy = 1
             self.initiative += speedy
             while self.initiative >= 10:
@@ -174,7 +176,7 @@ class Creature:
                     self.health = HEALTH/10
                 self.owner.color = color(0,200,0)
             elif choice == 4:
-                selection = int(random(0,3))
+                selection = int(random(0,2))
                 if selection <= 1:
                     if self.check_attribute('carnivore') == False:
                         self.attributes.append('carnivore')
