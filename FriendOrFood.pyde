@@ -1,6 +1,6 @@
 WIDTH = 700
 HEIGHT = 700
-FOODAMOUNT = 10
+FOODAMOUNT = 20
 MAXOBJECTS = 100
 HEALTH = 2000
 MUTATION_CHANCE = 25
@@ -58,7 +58,7 @@ def place_food(amount = FOODAMOUNT):
         i += 1
     
 class Object:
-    def __init__(self, x = 100, y = 50, name = 'none', creature = None, color = color(0,0,0), size = 10):
+    def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(0,0,0), size = 10):
         self.x = x
         self.y = y
         self.name = name
