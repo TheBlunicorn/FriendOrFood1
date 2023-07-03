@@ -15,18 +15,20 @@ def setup():
 def draw():
     background(255)
     global objects
-
-    for obj in objects:
+    active_objects = objects
+    for obj in active_objects:
         fill(obj.color)
         circle(obj.x,obj.y,obj.size)
         if obj.creature:
-            i = 0
-            while i < obj.creature.speed:
-                obj.creature.move_target()
-                i+=1
+                
+            obj.creature.take_turn()
+def mouseClicked():
+    place_food()
         
 def place_food(amount = 20):
     i = 0
+    if len(objects) >= 100:
+        return
     while i <= amount:
         xfood = random(50,450)
         yfood = random(50,450)
@@ -46,27 +48,32 @@ class Object:
             self.creature.owner = self
 
 class Creature:
-    def __init__(self,health = 500, speed = 1, senses = 100, attributes = [], target = None):
+    def __init__(self,health = 2000, speed = 10, senses = 100, attributes = [], target = None, size = 10):
         self.base_health = health
         self.health = health
         self.speed = speed
         self.senses = senses
         self.attributes = attributes
         self.target = target
-    
-    @property
-    def energy_loss(self):
-        energy = int((self.speed * self.owner.size * self.senses)/1000)
-        return energy
+        self.energy_loss = int((speed * size * senses)/2500)
+        self.initiative = 0
+        if self.energy_loss <= 1:
+            self.energy_loss = 1
+            
+    def take_turn(self):
+        self.initiative += self.speed
+        while self.initiative >= 10:
+            self.initiative -= 10
+            self.move_target()
     
     def eat(self, food):
         objects.remove(food)
-        self.health += 200
+        self.health = self.base_health
         self.replicate()
         
     def replicate(self):
         
-        creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes)
+        creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes, size = self.owner.size)
         newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component, size = self.owner.size)
         newowo.creature.mutate()
         objects.append(newowo)
@@ -84,10 +91,17 @@ class Creature:
                     self.speed = 1
             elif choice == 1:
                 self.senses += change*20
+                if self.senses <= 0:
+                    self.senses = 1
                 self.owner.color = color(0,0,200)
             elif choice == 2:
-                self.owner.size +=change*2
-                self.health += change*100
+                self.owner.size +=change
+                self.health += change*200
+                self.base_health += change*200
+                if self.owner.size <= 0:
+                    self.owner.size = 1
+                    self.base_health = 200
+                    self.health = 200
                 self.owner.color = color(0,200,0)
         
         
