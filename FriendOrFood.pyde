@@ -72,19 +72,23 @@ class Creature:
         objects.append(newowo)
     
     def mutate(self):
-        if random(1,2) == 1:
-            choice = random(1,3)
-            change = random(-1,1)
-            if choice == 1:
+        if int(random(2)) == 1:
+            choice = int(random(0,3))
+            change = int(random(0,2))
+            if change == 0:
+                change = -1
+            if choice == 0:
                 self.speed += change
-                self.owner.color = (50,0,0)
-            elif choice == 2:
+                self.owner.color = color(200,0,0)
+                if self.speed <= 0:
+                    self.speed = 1
+            elif choice == 1:
                 self.senses += change*20
-                self.owner.color = (00,0,50)
-            elif choice == 3:
-                self.owner.size +=change
-                self.health += change*50
-                self.owner.color = (00,50,0)
+                self.owner.color = color(0,0,200)
+            elif choice == 2:
+                self.owner.size +=change*2
+                self.health += change*100
+                self.owner.color = color(0,200,0)
         
         
     def find_target(self):
