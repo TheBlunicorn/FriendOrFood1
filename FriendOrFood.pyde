@@ -62,6 +62,8 @@ class Creature:
    
     def calc_energy(self):
         self.energy_loss = int((self.speed * self.owner.size * self.senses)/2500)
+        if self.energy_loss <= 1:
+            self.energy_loss = 1
             
     def take_turn(self):
         owo = self.owner
@@ -72,6 +74,7 @@ class Creature:
         self.health -= self.energy_loss
         if self.health <= 0:
             objects.remove(owo)
+            place_food(1)
         
     
     def eat(self, food):
