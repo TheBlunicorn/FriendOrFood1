@@ -4,7 +4,7 @@ objects = []
     
 def setup():
     global objects
-    size(500, 500)
+    size(700, 700)
     fill(0)
     noStroke()
     creature_component = Creature()
@@ -30,8 +30,13 @@ def place_food(amount = 20):
     if len(objects) >= 100:
         return
     while i <= amount:
-        xfood = random(50,450)
-        yfood = random(50,450)
+        if i <= amount/2:
+            xfood = random(100,600)
+            yfood = random(100,600)
+        else:
+            xfood = random(300,400)
+            yfood = random(300,400)
+            
         colorfood = color(252,3,3)
         objects.append(Object(x = xfood,y = yfood,name = 'food',color = colorfood, size = 5))
         i += 1
@@ -61,7 +66,7 @@ class Creature:
             self.energy_loss = 1
    
     def calc_energy(self):
-        self.energy_loss = int((self.speed * self.owner.size * self.senses)/2500)
+        self.energy_loss = int((self.speed * self.speed * self.owner.size * self.owner.size * self.senses)/250000)
         if self.energy_loss <= 1:
             self.energy_loss = 1
             
@@ -74,7 +79,6 @@ class Creature:
         self.health -= self.energy_loss
         if self.health <= 0:
             objects.remove(owo)
-            place_food(1)
         
     
     def eat(self, food):
@@ -85,7 +89,7 @@ class Creature:
     def replicate(self):
         
         creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes, size = self.owner.size)
-        newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component, size = self.owner.size)
+        newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component,color = self.owner.color, size = self.owner.size)
         newowo.creature.mutate()
         newowo.creature.calc_energy()
         objects.append(newowo)
@@ -129,12 +133,12 @@ class Creature:
                         closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                         self.target = [obj.x, obj.y]
         if food == None:
-            rx = random(1, 499)
-            ry = random(1, 499)
+            rx = random(1, 699)
+            ry = random(1, 699)
             while dist(owo.x,owo.y,rx,ry) > self.senses:
                 
-                rx = random(1, 499)
-                ry = random(1, 499)
+                rx = random(1, 699)
+                ry = random(1, 699)
             self.target = [rx,ry]
     
     def move(self, dx, dy):
