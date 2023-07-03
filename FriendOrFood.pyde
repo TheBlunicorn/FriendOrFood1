@@ -1,10 +1,11 @@
-
+WIDTH = 700
+HEIGHT = 700
 
 objects = []
     
 def setup():
     global objects
-    size(700, 700)
+    size(WIDTH, HEIGHT)
     fill(0)
     noStroke()
     creature_component = Creature()
@@ -31,11 +32,11 @@ def place_food(amount = 20):
         return
     while i <= amount:
         if i <= amount/2:
-            xfood = random(100,600)
-            yfood = random(100,600)
+            xfood = random(WIDTH + 50,WIDTH - 50)
+            yfood = random(HEIGHT + 50, HEIGHT - 50)
         else:
-            xfood = random(300,400)
-            yfood = random(300,400)
+            xfood = random(WIDTH/2-WIDTH/10,WIDTH/2+WIDTH/10)
+            yfood = random(HEIGHT/2-HEIGHT/10,HEIGHT/2+HEIGHT/10)
             
         colorfood = color(252,3,3)
         objects.append(Object(x = xfood,y = yfood,name = 'food',color = colorfood, size = 5))
@@ -72,7 +73,10 @@ class Creature:
             
     def take_turn(self):
         owo = self.owner
-        self.initiative += self.speed
+        speed = self.speed
+        if self.health <= self.base_health/10:
+            speed = speed/2
+        self.initiative += speed
         while self.initiative >= 10:
             self.initiative -= 10
             self.move_target()
@@ -83,7 +87,9 @@ class Creature:
     
     def eat(self, food):
         objects.remove(food)
-        self.health = self.base_health
+        self.health += 500
+        if self.health >= self.base_health:
+            self.health = self.base_health
         self.replicate()
         
     def replicate(self):
@@ -133,12 +139,12 @@ class Creature:
                         closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                         self.target = [obj.x, obj.y]
         if food == None:
-            rx = random(1, 699)
-            ry = random(1, 699)
+            rx = random(1, WIDTH-1)
+            ry = random(1, HEIGHT - 1)
             while dist(owo.x,owo.y,rx,ry) > self.senses:
                 
-                rx = random(1, 699)
-                ry = random(1, 699)
+                rx = random(1, WIDTH -1 )
+                ry = random(1, HEIGHT -1)
             self.target = [rx,ry]
     
     def move(self, dx, dy):
