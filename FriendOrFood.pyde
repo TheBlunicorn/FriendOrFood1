@@ -55,16 +55,24 @@ class Creature:
         self.senses = senses
         self.attributes = attributes
         self.target = target
-        self.energy_loss = int((speed * size * senses)/2500)
+        self.energy_loss = 4
         self.initiative = 0
         if self.energy_loss <= 1:
             self.energy_loss = 1
+   
+    def calc_energy(self):
+        self.energy_loss = int((self.speed * self.owner.size * self.senses)/2500)
             
     def take_turn(self):
+        owo = self.owner
         self.initiative += self.speed
         while self.initiative >= 10:
             self.initiative -= 10
             self.move_target()
+        self.health -= self.energy_loss
+        if self.health <= 0:
+            objects.remove(owo)
+        
     
     def eat(self, food):
         objects.remove(food)
@@ -76,6 +84,7 @@ class Creature:
         creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes, size = self.owner.size)
         newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component, size = self.owner.size)
         newowo.creature.mutate()
+        newowo.creature.calc_energy()
         objects.append(newowo)
     
     def mutate(self):
@@ -92,7 +101,7 @@ class Creature:
             elif choice == 1:
                 self.senses += change*20
                 if self.senses <= 0:
-                    self.senses = 1
+                    self.senses = 20
                 self.owner.color = color(0,0,200)
             elif choice == 2:
                 self.owner.size +=change
@@ -129,9 +138,6 @@ class Creature:
         owo = self.owner
         owo.x += dx
         owo.y += dy
-        self.health -= self.energy_loss
-        if self.health <= 0:
-            objects.remove(owo)
         
                 
     def move_target(self):
