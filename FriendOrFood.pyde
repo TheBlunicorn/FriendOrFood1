@@ -1,7 +1,9 @@
-WIDTH = 700
-HEIGHT = 700
-FOODAMOUNT = 20
+WIDTH = 1000
+HEIGHT = 1000
+FOODAMOUNT = 10
 MAXOBJECTS = 100
+HEALTH = 2000
+MUTATION_CHANCE = 25
 
 
 objects = []
@@ -57,7 +59,7 @@ class Object:
             self.creature.owner = self
 
 class Creature:
-    def __init__(self,health = 2000, speed = 10, senses = 100, attributes = [], target = None, size = 10):
+    def __init__(self,health = HEALTH, speed = 10, senses = 100, attributes = [], target = None, size = 10):
         self.base_health = health
         self.health = health
         self.speed = speed
@@ -90,7 +92,7 @@ class Creature:
     
     def eat(self, food):
         objects.remove(food)
-        self.health += 500
+        self.health += HEALTH/4
         if self.health >= self.base_health:
             self.health = self.base_health
         self.replicate()
@@ -104,7 +106,7 @@ class Creature:
         objects.append(newowo)
     
     def mutate(self):
-        if int(random(3)) == 1:
+        if int(random(100)) <= MUTATION_CHANCE:
             choice = int(random(0,3))
             change = int(random(0,2))
             if change == 0:
@@ -121,12 +123,12 @@ class Creature:
                 self.owner.color = color(0,0,200)
             elif choice == 2:
                 self.owner.size +=change
-                self.health += change*200
-                self.base_health += change*200
+                self.health += change*HEALTH/10
+                self.base_health += change*HEALTH/10
                 if self.owner.size <= 0:
                     self.owner.size = 1
-                    self.base_health = 200
-                    self.health = 200
+                    self.base_health = HEALTH/10
+                    self.health = HEALTH/10
                 self.owner.color = color(0,200,0)
         
         
