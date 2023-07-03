@@ -184,7 +184,7 @@ class Creature:
                         closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                         self.target = [obj.x, obj.y]
                     elif obj.creature and self.check_attribute('carnivore'):
-                        if obj.size < owo.size:
+                        if obj.size < owo.size-1:
                             food = obj
                             closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                             self.target = [obj.x, obj.y]
@@ -221,7 +221,7 @@ class Creature:
                             self.eat(obj)
                             break
                         elif  obj.creature and self.check_attribute('carnivore'):
-                            if obj.size < owo.size and obj.creature.health > 0:
+                            if obj.size < owo.size-1 and obj.creature.health > 0:
                                 self.attack(obj)
                                 break
             
