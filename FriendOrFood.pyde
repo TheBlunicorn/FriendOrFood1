@@ -1,5 +1,5 @@
-WIDTH = 1000
-HEIGHT = 1000
+WIDTH = 700
+HEIGHT = 700
 FOODAMOUNT = 10
 MAXOBJECTS = 100
 HEALTH = 2000
@@ -25,8 +25,14 @@ def draw():
     active_objects = objects
     for obj in active_objects:
         fill(obj.color)
-        circle(obj.x,obj.y,obj.size)
         if obj.creature:
+            if obj.creature.check_attribute('carnivore'):
+                square(obj.x,obj.y,obj.size)
+            else:
+                circle(obj.x,obj.y,obj.size)
+        else:
+            circle(obj.x,obj.y,obj.size)
+        if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
     if AUTOFOOD == True and len(objects) < MAXOBJECTS:
@@ -63,17 +69,26 @@ class Object:
             self.creature.owner = self
 
 class Creature:
-    def __init__(self,health = HEALTH, speed = 10, senses = 100, attributes = [], target = None, size = 10):
+    def __init__(self,health = HEALTH, speed = 10, senses = 100, target = None, size = 10):
+        self.attributes = []
         self.base_health = health
         self.health = health
         self.speed = speed
         self.senses = senses
-        self.attributes = attributes
         self.target = target
         self.energy_loss = 4
         self.initiative = 0
         if self.energy_loss <= 1:
             self.energy_loss = 1
+                
+    def check_attribute(self, check):
+        result = False
+        for attr in self.attributes:
+           if attr == check:
+               result = True
+               break
+        return result
+
    
     def calc_energy(self):
         self.energy_loss = int((self.speed * self.speed * self.owner.size * self.owner.size * self.senses)/250000)
@@ -82,16 +97,19 @@ class Creature:
             
     def take_turn(self):
         owo = self.owner
-        speed = self.speed
-        if self.health <= self.base_health/10:
-            speed = speed/2
-        self.initiative += speed
-        while self.initiative >= 10:
-            self.initiative -= 10
-            self.move_target()
-        self.health -= self.energy_loss
         if self.health <= 0:
             objects.remove(owo)
+        else:
+            speed = self.speed
+            if self.health <= self.base_health/10:
+                speed = speed/2
+            self.initiative += speed
+            while self.initiative >= 10:
+                self.initiative -= 10
+                self.move_target()
+            self.health -= self.energy_loss
+            if self.health <= 0:
+                objects.remove(owo)
         
     
     def eat(self, food):
@@ -101,17 +119,28 @@ class Creature:
             self.health = self.base_health
         self.replicate()
         
+    def attack(self, target):
+        target.creature.health = 0
+        print('creature eaten')
+        self.health += HEALTH
+        if self.health >= self.base_health:
+            self.health = self.base_health
+        self.replicate()
+        print('carnivore reproduced')
+        
     def replicate(self):
         
-        creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes, size = self.owner.size)
+        creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, size = self.owner.size)
         newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component,color = self.owner.color, size = self.owner.size)
+        for obj in self.attributes:
+            newowo.creature.attributes.append(obj)
         newowo.creature.mutate()
         newowo.creature.calc_energy()
         objects.append(newowo)
     
     def mutate(self):
         if int(random(100)) <= MUTATION_CHANCE:
-            choice = int(random(0,3))
+            choice = int(random(0,5))
             change = int(random(0,2))
             if change == 0:
                 change = -1
@@ -134,6 +163,13 @@ class Creature:
                     self.base_health = HEALTH/10
                     self.health = HEALTH/10
                 self.owner.color = color(0,200,0)
+            elif choice == 4:
+                    if self.check_attribute('carnivore') == False:
+                        self.attributes.append('carnivore')
+                        print('new_carnivore')
+                    else:
+                        self.attributes.remove('carnivore')
+                        
         
         
     def find_target(self):
@@ -143,10 +179,16 @@ class Creature:
         for obj in objects:
             if obj != owo:
                 if dist(owo.x, owo.y, obj.x, obj.y) < closest_dist:
-                    if obj.name == 'food':
+                    if obj.name == 'food' and self.check_attribute('carnivore') == False:
                         food = obj
                         closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                         self.target = [obj.x, obj.y]
+                    elif obj.creature and self.check_attribute('carnivore'):
+                        if obj.size < owo.size:
+                            food = obj
+                            closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
+                            self.target = [obj.x, obj.y]
+                            
         if food == None:
             rx = random(1, WIDTH-1)
             ry = random(1, HEIGHT - 1)
@@ -171,12 +213,17 @@ class Creature:
         disty = ty - owo.y
         distance = dist(owo.x, owo.y, tx, ty)
         
-        if distance < 1:
+        if distance < 2:
             for obj in objects:
                 if obj != owo:
-                    if dist(owo.x, owo.y, obj.x, obj.y) < 1:
-                        if obj.name == 'food':
+                    if dist(owo.x, owo.y, obj.x, obj.y) < 2:
+                        if obj.name == 'food' and self.check_attribute('carnivore') == False:
                             self.eat(obj)
+                            break
+                        elif  obj.creature and self.check_attribute('carnivore'):
+                            if obj.size < owo.size and obj.creature.health > 0:
+                                self.attack(obj)
+                                break
             
             self.find_target()
         else:
