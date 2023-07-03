@@ -4,6 +4,7 @@ FOODAMOUNT = 10
 MAXOBJECTS = 100
 HEALTH = 2000
 MUTATION_CHANCE = 25
+AUTOFOOD = True
 
 
 objects = []
@@ -28,6 +29,9 @@ def draw():
         if obj.creature:
                 
             obj.creature.take_turn()
+    if AUTOFOOD == True and len(objects) < MAXOBJECTS:
+        place_food()
+        
 def mouseClicked():
     place_food()
         
