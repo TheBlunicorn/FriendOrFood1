@@ -1,5 +1,8 @@
 WIDTH = 700
 HEIGHT = 700
+FOODAMOUNT = 20
+MAXOBJECTS = 100
+
 
 objects = []
     
@@ -26,14 +29,14 @@ def draw():
 def mouseClicked():
     place_food()
         
-def place_food(amount = 20):
+def place_food(amount = FOODAMOUNT):
     i = 0
-    if len(objects) >= 100:
+    if len(objects) >= MAXOBJECTS:
         return
     while i <= amount:
         if i <= amount/2:
-            xfood = random(WIDTH + 50,WIDTH - 50)
-            yfood = random(HEIGHT + 50, HEIGHT - 50)
+            xfood = random(50,WIDTH - 50)
+            yfood = random(50, HEIGHT - 50)
         else:
             xfood = random(WIDTH/2-WIDTH/10,WIDTH/2+WIDTH/10)
             yfood = random(HEIGHT/2-HEIGHT/10,HEIGHT/2+HEIGHT/10)
@@ -101,7 +104,7 @@ class Creature:
         objects.append(newowo)
     
     def mutate(self):
-        if int(random(2)) == 1:
+        if int(random(3)) == 1:
             choice = int(random(0,3))
             change = int(random(0,2))
             if change == 0:
