@@ -20,7 +20,10 @@ def draw():
         fill(obj.color)
         circle(obj.x,obj.y,obj.size)
         if obj.creature:
-            obj.creature.move_target()
+            i = 0
+            while i < obj.creature.speed:
+                obj.creature.move_target()
+                i+=1
         
 def place_food(amount = 20):
     i = 0
@@ -44,11 +47,17 @@ class Object:
 
 class Creature:
     def __init__(self,health = 500, speed = 1, senses = 100, attributes = [], target = None):
+        self.base_health = health
         self.health = health
         self.speed = speed
         self.senses = senses
         self.attributes = attributes
         self.target = target
+    
+    @property
+    def energy_loss(self):
+        energy = int((self.speed * self.owner.size * self.senses)/1000)
+        return energy
     
     def eat(self, food):
         objects.remove(food)
@@ -57,8 +66,26 @@ class Creature:
         
     def replicate(self):
         
-        creature_component = Creature()
-        objects.append(Object(x = self.owner.x, y = self.owner.y, creature = creature_component))
+        creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, attributes = self.attributes)
+        newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component, size = self.owner.size)
+        newowo.creature.mutate()
+        objects.append(newowo)
+    
+    def mutate(self):
+        if random(1,2) == 1:
+            choice = random(1,3)
+            change = random(-1,1)
+            if choice == 1:
+                self.speed += change
+                self.owner.color = (50,0,0)
+            elif choice == 2:
+                self.senses += change*20
+                self.owner.color = (00,0,50)
+            elif choice == 3:
+                self.owner.size +=change
+                self.health += change*50
+                self.owner.color = (00,50,0)
+        
         
     def find_target(self):
         owo = self.owner
@@ -84,7 +111,7 @@ class Creature:
         owo = self.owner
         owo.x += dx
         owo.y += dy
-        self.health -= 1
+        self.health -= self.energy_loss
         if self.health <= 0:
             objects.remove(owo)
         
