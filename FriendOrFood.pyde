@@ -1,14 +1,15 @@
-WIDTH = 1200
-HEIGHT = 800
-FOODAMOUNT = 10
+WIDTH = 700
+HEIGHT = 700
+FOODAMOUNT = 50
 MAXOBJECTS = 200
 HEALTH = 2000
 MUTATION_CHANCE = 25
 AUTOFOOD = True
+FOODINTERVAL = 700
 
 
 objects = []
-    
+counter = 0
 def setup():
     global objects
     size(WIDTH, HEIGHT)
@@ -21,7 +22,7 @@ def setup():
     
 def draw():
     background(255)
-    global objects
+    global objects, counter
     active_objects = objects
     for obj in active_objects:
         fill(obj.color)
@@ -35,16 +36,17 @@ def draw():
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
-    if AUTOFOOD == True and len(objects) < MAXOBJECTS:
-        place_food()
+    if AUTOFOOD == True:
+        counter +=1
+        if counter >= FOODINTERVAL:
+            place_food()
+            counter = 0
         
 def mouseClicked():
     place_food()
         
 def place_food(amount = FOODAMOUNT):
     i = 0
-    if len(objects) >= MAXOBJECTS:
-        return
     while i <= amount:
         if i <= amount/2:
             xfood = random(50,WIDTH - 50)
@@ -100,18 +102,21 @@ class Creature:
         if self.health <= 0:
             objects.remove(owo)
         else:
+            energy = self.energy_loss
             speedy = self.speed
             if self.health <= self.base_health/10:
                 speedy = speedy/2
-            if self.check_attribute('lazy') and self.check_attribute('chilling'):
-                    self.health += int(self.energy_loss*2/3)
-                    speedy = speedy/3
+            if self.check_attribute('chilling'):
                     self.find_target()
+                    if self.check_attribute('chilling'):
+                        self.health += int(self.energy_loss/2)
+                        energy = energy/2
+                        speedy = 1
             self.initiative += speedy
             while self.initiative >= 10:
                 self.initiative -= 10
                 self.move_target()
-            self.health -= self.energy_loss
+            self.health -= energy
             if self.health <= 0:
                 objects.remove(owo)
         
@@ -133,7 +138,8 @@ class Creature:
         print('carnivore reproduced')
         
     def replicate(self):
-        
+        if len(objects) >= MAXOBJECTS:
+            return
         creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, size = self.owner.size)
         newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component,color = self.owner.color, size = self.owner.size)
         for obj in self.attributes:
@@ -168,13 +174,13 @@ class Creature:
                     self.health = HEALTH/10
                 self.owner.color = color(0,200,0)
             elif choice == 4:
-                selection = int(random(0,2))
-                if selection == 0:
+                selection = int(random(0,3))
+                if selection <= 1:
                     if self.check_attribute('carnivore') == False:
                         self.attributes.append('carnivore')
                     else:
                         self.attributes.remove('carnivore')
-                elif selection == 1:
+                elif selection == 2:
                     if self.check_attribute('lazy') == False:
                         self.attributes.append('lazy')
                         print('new lazy creature')
@@ -195,14 +201,18 @@ class Creature:
                         food = obj
                         closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                         self.target = [obj.x, obj.y]
+                        if self.check_attribute('chilling'):
+                            self.attributes.remove('chilling')
                     elif obj.creature and self.check_attribute('carnivore'):
                         if obj.size < owo.size-1:
                             food = obj
                             closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                             self.target = [obj.x, obj.y]
+                            if self.check_attribute('chilling'):
+                                self.attributes.remove('chilling')
                             
         if food == None:
-            if self.check_attribute('lazy'):
+            if self.check_attribute('lazy') and self.check_attribute('chilling') == False:
                 self.attributes.append('chilling')
             
             rx = random(1, WIDTH-1)
@@ -212,8 +222,6 @@ class Creature:
                 rx = random(1, WIDTH -1 )
                 ry = random(1, HEIGHT -1)
             self.target = [rx,ry]
-        elif self.check_attribute('chilling'):
-            self.attributes.remove('chilling')
     
     def move(self, dx, dy):
         owo = self.owner
