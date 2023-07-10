@@ -5,7 +5,7 @@ MAXOBJECTS = 200
 HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 50
+FOODINTERVAL = 100
 
 
 objects = []
@@ -95,7 +95,7 @@ class Creature:
 
    
     def calc_energy(self):
-        self.energy_loss = int((self.speed * self.speed * self.owner.size * self.owner.size * self.senses)/250000)
+        self.energy_loss = int((self.speed * self.speed * self.owner.size * self.senses)/25000)
         if self.energy_loss <= 1:
             self.energy_loss = 1
             
