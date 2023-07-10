@@ -152,20 +152,29 @@ class Creature:
     
     def mutate(self):
         if int(random(100)) <= MUTATION_CHANCE:
+            r = red(self.owner.color)
+            g = green(self.owner.color)
+            b = blue(self.owner.color)
             choice = int(random(0,5))
             change = int(random(0,2))
             if change == 0:
                 change = -1
             if choice == 0:
                 self.speed += change
-                self.owner.color = color(200,0,0)
                 if self.speed <= 0:
                     self.speed = 1
+                r = int(self.speed*255/20)
+                if r >= 255:
+                    r = 255
+                self.owner.color = color(r,g,b)
             elif choice == 1:
                 self.senses += change*20
                 if self.senses <= 0:
                     self.senses = 20
-                self.owner.color = color(0,0,200)
+                g = int(self.senses*255/200)
+                if g >= 255:
+                    g = 255
+                self.owner.color = color(r,g,b)
             elif choice == 2:
                 self.owner.size +=change
                 self.health += change*HEALTH/10
@@ -174,7 +183,10 @@ class Creature:
                     self.owner.size = 1
                     self.base_health = HEALTH/10
                     self.health = HEALTH/10
-                self.owner.color = color(0,200,0)
+                b = int(self.owner.size*255/20)
+                if b >= 255:
+                    b = 255
+                self.owner.color = color(r,g,b)
             elif choice == 4:
                 selection = int(random(0,2))
                 if selection <= 1:
