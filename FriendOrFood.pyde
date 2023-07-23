@@ -39,11 +39,11 @@ def draw():
     active_objects = objects
     for obj in active_objects:
         if obj.creature:
-            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
             tint(obj.color)
+            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
         else:
-            image(obj.sprite, obj.x,obj.y,obj.size*2,obj.size*2)
             tint(255,255,255)
+            image(obj.sprite, obj.x,obj.y,obj.size*2,obj.size*2)
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
