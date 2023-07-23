@@ -1,11 +1,11 @@
 WIDTH = 1600
 HEIGHT = 1000
 FOODAMOUNT = 6
-MAXOBJECTS = 200
+MAXOBJECTS = 100
 HEALTH = 1600
-MUTATION_CHANCE = 50
+MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 100
+FOODINTERVAL = 200
 
 objects = []
 counter = 0
@@ -68,7 +68,7 @@ def place_food(amount = FOODAMOUNT):
         i += 1
     
 class Object:
-    def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(0,0,0), size = 10):
+    def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(255,255,255), size = 10):
         self.x = x
         self.y = y
         self.name = name
