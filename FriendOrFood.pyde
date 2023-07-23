@@ -1,3 +1,4 @@
+noLoop()
 WIDTH = 700
 HEIGHT = 700
 FOODAMOUNT = 10
@@ -14,8 +15,10 @@ objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100, uwu010, uwu110, uwu001, uwu101, uwu011, uwu111
+    global uwu000, uwu100, uwu010, uwu110, uwu001, uwu101, uwu011, uwu111, startBtn, title
     global foodpear, foodapple, foodblueberry, foodcherry, foodlemon, foodorange, foodstarfruit
+    startBtn = loadImage("IMG_FoF_start.PNG")
+    title = loadImage("IMG_FoF_title.PNG")
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
     uwu100 = loadImage("data/IMG_uwu_100.PNG")
     uwu010 = loadImage("data/IMG_uwu_010.PNG")
@@ -59,8 +62,16 @@ def draw():
         if counter >= FOODINTERVAL and len(objects) < MAXOBJECTS:
             place_food()
             counter = 0
-        
+    fill(0,20)
+    rect(width/2+30, 350, title.width, 300);
+    image(title, width/2 ,300)
+    image(startBtn, width/2, height/1.5, startBtn.width / 3, startBtn.height / 3)
+    
 def mouseClicked():
+    if WIDTH/2 - startBtn.width/2 < mouseX < WIDTH/2 + startBtn.width/2 and HEIGHT/2 - startBtn.height/2 < mouseY < HEIGHT/2 + startBtn.height/2:
+        loop()
+        title.width=0
+        startBtn.width=0
     place_food()
         
 def place_food(amount = FOODAMOUNT):
