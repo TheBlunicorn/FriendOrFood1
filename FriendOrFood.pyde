@@ -11,10 +11,18 @@ objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100, food1
+    global uwu000, uwu100
+    global foodpear, foodapple, foodblueberry, foodcherry, foodlemon, foodorange, foodstarfruit
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
     uwu100 = loadImage("data/IMG_uwu_100.PNG")
-    food1 = loadImage("data/IMG_FoF_pear.PNG")
+    foodpear = loadImage("data/IMG_FoF_pear.PNG")
+    foodapple = loadImage("data/IMG_FoF_apple.PNG")
+    foodblueberry = loadImage("data/IMG_FoF_blueberry.PNG")
+    foodcherry = loadImage("data/IMG_FoF_cherry.PNG")
+    foodlemon = loadImage("data/IMG_FoF_lemon.PNG")
+    foodorange = loadImage("data/IMG_FoF_orange.PNG")
+    foodstarfruit = loadImage("data/IMG_FoF_starfruit.PNG")
+    
     global objects
     size(WIDTH, HEIGHT)
     fill(0)
@@ -75,7 +83,7 @@ class Object:
             self.creature.owner = self
             self.sprite = uwu000
         else:
-            self.sprite = food1
+            self.sprite = foodpear
 
 class Creature:
     def __init__(self,health = HEALTH, speed = 10, senses = 100, target = None, size = 10):
