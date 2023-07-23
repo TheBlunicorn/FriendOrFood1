@@ -1,11 +1,11 @@
 WIDTH = 1600
 HEIGHT = 1000
-FOODAMOUNT = 6
+FOODAMOUNT = 12
 MAXOBJECTS = 100
 HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 100
+FOODINTERVAL = 400
 
 objects = []
 counter = 0
@@ -34,6 +34,7 @@ def draw():
             tint(obj.color)
         else:
             image(obj.sprite, obj.x,obj.y,obj.size*2,obj.size*2)
+            tint(255,255,255)
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
