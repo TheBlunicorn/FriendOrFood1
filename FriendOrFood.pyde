@@ -7,10 +7,13 @@ MUTATION_CHANCE = 50
 AUTOFOOD = True
 FOODINTERVAL = 100
 
-
 objects = []
 counter = 0
 def setup():
+    imageMode(CENTER)
+    global uwu000, uwu100
+    uwu000 = loadImage("data/IMG_uwu_000.PNG")
+    uwu100 = loadImage("data/IMG_uwu_100.PNG")
     global objects
     size(WIDTH, HEIGHT)
     fill(0)
@@ -25,13 +28,16 @@ def draw():
     global objects, counter
     active_objects = objects
     for obj in active_objects:
-        fill(obj.color)
         if obj.creature:
             if obj.creature.check_attribute('carnivore'):
-                square(obj.x,obj.y,obj.size)
+                #square(obj.x,obj.y,obj.size)
+                image(uwu100, obj.x,obj.y,obj.size*2,obj.size*2)
             else:
-                circle(obj.x,obj.y,obj.size)
+                #circle(obj.x,obj.y,obj.size)
+                image(uwu000, obj.x,obj.y,obj.size*2,obj.size*2)
+            tint(obj.color)
         else:
+            fill(obj.color)
             circle(obj.x,obj.y,obj.size)
         if obj.creature and objects.count(obj) > 0:
                 
