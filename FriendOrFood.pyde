@@ -11,9 +11,10 @@ objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100
+    global uwu000, uwu100, food1
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
     uwu100 = loadImage("data/IMG_uwu_100.PNG")
+    food1 = loadImage("data/IMG_FoF_pear.PNG")
     global objects
     size(WIDTH, HEIGHT)
     fill(0)
@@ -29,16 +30,10 @@ def draw():
     active_objects = objects
     for obj in active_objects:
         if obj.creature:
-            if obj.creature.check_attribute('carnivore'):
-                #square(obj.x,obj.y,obj.size)
-                image(uwu100, obj.x,obj.y,obj.size*3,obj.size*3)
-            else:
-                #circle(obj.x,obj.y,obj.size)
-                image(uwu000, obj.x,obj.y,obj.size*3,obj.size*3)
+            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
             tint(obj.color)
         else:
-            fill(obj.color)
-            circle(obj.x,obj.y,obj.size)
+            image(obj.sprite, obj.x,obj.y,obj.size*2,obj.size*2)
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
@@ -75,8 +70,12 @@ class Object:
         self.creature = creature
         self.color = color
         self.size = size
+        self.sprite = None
         if self.creature:
             self.creature.owner = self
+            self.sprite = uwu000
+        else:
+            self.sprite = food1
 
 class Creature:
     def __init__(self,health = HEALTH, speed = 10, senses = 100, target = None, size = 10):
@@ -206,6 +205,10 @@ class Creature:
                         print('new lazy creature')
                     else:
                         self.attributes.remove('lazy')
+        if self.check_attribute('carnivore'):
+            self.owner.sprite = uwu100
+        else:
+            self.owner.spirte = uwu000
                     
                         
         
