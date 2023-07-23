@@ -31,10 +31,10 @@ def draw():
         if obj.creature:
             if obj.creature.check_attribute('carnivore'):
                 #square(obj.x,obj.y,obj.size)
-                image(uwu100, obj.x,obj.y,obj.size*2,obj.size*2)
+                image(uwu100, obj.x,obj.y,obj.size*3,obj.size*3)
             else:
                 #circle(obj.x,obj.y,obj.size)
-                image(uwu000, obj.x,obj.y,obj.size*2,obj.size*2)
+                image(uwu000, obj.x,obj.y,obj.size*3,obj.size*3)
             tint(obj.color)
         else:
             fill(obj.color)
