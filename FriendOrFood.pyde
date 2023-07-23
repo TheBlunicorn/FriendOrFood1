@@ -14,11 +14,15 @@ objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100, uwu010, uwu110, food1
+    global uwu000, uwu100, uwu010, uwu110, uwu001, uwu101, uwu011, uwu111, food1
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
     uwu100 = loadImage("data/IMG_uwu_100.PNG")
     uwu010 = loadImage("data/IMG_uwu_010.PNG")
     uwu110 = loadImage("data/IMG_uwu_110.PNG")
+    uwu001 = loadImage("data/IMG_uwu_001.PNG")
+    uwu101 = loadImage("data/IMG_uwu_101.PNG")
+    uwu011 = loadImage("data/IMG_uwu_011.PNG")
+    uwu111 = loadImage("data/IMG_uwu_111.PNG")
     food1 = loadImage("data/IMG_FoF_pear.PNG")
     global objects
     size(WIDTH, HEIGHT)
@@ -121,6 +125,8 @@ class Creature:
                 speedy = speedy/2
             if self.check_attribute('horns'):
                 speedy -=1
+            if self.check_attribute('hands'):
+                speedy -=1
             if self.check_attribute('carnivore'):
                 speedy +=1
             if self.check_attribute('chilling'):
@@ -211,7 +217,7 @@ class Creature:
                     b = 255
                 #self.owner.color = color(r,g,b)
             elif choice == 4:
-                selection = int(random(0,9))
+                selection = int(random(0,11))
                 if selection <= 5:
                     if self.check_attribute('carnivore') == False:
                         self.attributes.append('carnivore')
@@ -221,12 +227,18 @@ class Creature:
                     if self.check_attribute('lazy') == False:
                         self.attributes.append('lazy')
                         print('new lazy creature')
-                elif selection <= 9:
+                elif selection <= 8:
                     if self.check_attribute('horns') == False:
                         self.attributes.append('horns')
                         print('new horny creature')
                     else:
                         self.attributes.remove('horns')
+                elif selection <= 10:
+                    if self.check_attribute('hands') == False:
+                        self.attributes.append('hands')
+                        print('new handy creature')
+                    else:
+                        self.attributes.remove('hands')
         if int(random(100)) <= MUTATION_CHANCE/2:
             selection = int(random(0,5))
             if selection == 1:
@@ -241,16 +253,28 @@ class Creature:
     def updatesprite(self):
         if self.check_attribute('carnivore'):
             if self.check_attribute('horns'):
-                self.owner.sprite = uwu110
+                if self.check_attribute('hands'):
+                    self.owner.sprite = uwu111
+                else:
+                    self.owner.sprite = uwu110
             else:
-                self.owner.sprite = uwu100
+                if self.check_attribute('hands'):
+                    self.owner.sprite = uwu101
+                else:
+                    self.owner.sprite = uwu100
                 
         else:
             if self.check_attribute('horns'):
-                self.owner.sprite = uwu010
+                if self.check_attribute('hands'):
+                    self.owner.sprite = uwu011
+                else:
+                    self.owner.sprite = uwu010
             else:
                 
-                self.owner.sprite = uwu000
+                if self.check_attribute('hands'):
+                    self.owner.sprite = uwu001
+                else:
+                    self.owner.sprite = uwu000
                     
                         
         
@@ -269,7 +293,7 @@ class Creature:
                         if self.check_attribute('chilling'):
                             self.attributes.remove('chilling')
                     elif obj.creature and self.check_attribute('carnivore'):
-                        if obj.size < owo.size-1:
+                        if obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size):
                             food = obj
                             closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                             self.target = [obj.x, obj.y]
@@ -302,15 +326,18 @@ class Creature:
         distx = tx - owo.x
         disty = ty - owo.y
         distance = dist(owo.x, owo.y, tx, ty)
-        if distance < 2:
+        grabdist = 2
+        if self.check_attribute('hands'):
+            grabdist +=1
+        if distance < grabdist:
             for obj in objects:
                 if obj != owo:
-                    if dist(owo.x, owo.y, obj.x, obj.y) < 2:
+                    if dist(owo.x, owo.y, obj.x, obj.y) < grabdist:
                         if obj.name == 'food' and self.check_attribute('carnivore') == False:
                             self.eat(obj)
                             break
                         elif  obj.creature and self.check_attribute('carnivore'):
-                            if obj.size < owo.size-1 and obj.creature.health > 0:
+                            if (obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size)) and obj.creature.health > 0:
                                 self.attack(obj)
                                 break
             self.find_target()
