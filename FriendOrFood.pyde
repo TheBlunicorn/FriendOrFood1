@@ -47,10 +47,10 @@ def draw():
     for obj in active_objects:
         if obj.creature:
             tint(obj.color)
-            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
+            image(obj.sprite, obj.x,obj.y,obj.size*4,obj.size*4)
         else:
             tint(255,255,255)
-            image(obj.sprite, obj.x,obj.y,obj.size*2,obj.size*2)
+            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
@@ -315,7 +315,7 @@ class Creature:
                         if self.check_attribute('chilling'):
                             self.attributes.remove('chilling')
                     elif obj.creature and self.check_attribute('carnivore'):
-                        if obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size):
+                        if obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not owo.creature.check_attribute('carnivore')):
                             food = obj
                             closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                             self.target = [obj.x, obj.y]
@@ -359,7 +359,7 @@ class Creature:
                             self.eat(obj)
                             break
                         elif  obj.creature and self.check_attribute('carnivore'):
-                            if (obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size)) and obj.creature.health > 0:
+                            if (obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not owo.creature.check_attribute('carnivore'))) and obj.creature.health > 0:
                                 self.attack(obj)
                                 break
             self.find_target()
