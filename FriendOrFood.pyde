@@ -1,19 +1,24 @@
-WIDTH = 1600
-HEIGHT = 1000
-FOODAMOUNT = 12
+WIDTH = 700
+HEIGHT = 700
+FOODAMOUNT = 10
 MAXOBJECTS = 100
 HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
 FOODINTERVAL = 400
-
+coloryellow = color(244,255,0)
+colorgreen = color(0,255,0)
+colorred = color(255,0,0)
+colorblue = color(255,255,255)
 objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100, food1
+    global uwu000, uwu100, uwu010, uwu110, food1
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
     uwu100 = loadImage("data/IMG_uwu_100.PNG")
+    uwu010 = loadImage("data/IMG_uwu_010.PNG")
+    uwu110 = loadImage("data/IMG_uwu_110.PNG")
     food1 = loadImage("data/IMG_FoF_pear.PNG")
     global objects
     size(WIDTH, HEIGHT)
@@ -64,14 +69,14 @@ def place_food(amount = FOODAMOUNT):
         i += 1
     
 class Object:
-    def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(255,255,255), size = 10):
+    def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(255,255,255), size = 10, sprite = None):
         self.x = x
         self.y = y
         self.name = name
         self.creature = creature
         self.color = color
         self.size = size
-        self.sprite = None
+        self.sprite = sprite
         if self.creature:
             self.creature.owner = self
             self.sprite = uwu000
@@ -114,6 +119,10 @@ class Creature:
             speedy = self.speed
             if self.health <= self.base_health/10:
                 speedy = speedy/2
+            if self.check_attribute('horns'):
+                speedy -=1
+            if self.check_attribute('carnivore'):
+                speedy +=1
             if self.check_attribute('chilling'):
                     self.find_target()
                     if self.check_attribute('chilling'):
@@ -137,6 +146,13 @@ class Creature:
         self.replicate()
         
     def attack(self, target):
+        if target.creature.check_attribute('horns'):
+            self.health -= self.base_health/4
+            
+            print('ouch!')
+            if self.health <= 0:
+                self.health = 0
+                return
         target.creature.health = 0
         print('creature eaten')
         self.health += HEALTH
@@ -153,6 +169,7 @@ class Creature:
         for obj in self.attributes:
             newowo.creature.attributes.append(obj)
         newowo.creature.mutate()
+        newowo.creature.updatesprite()
         newowo.creature.calc_energy()
         objects.append(newowo)
     
@@ -172,7 +189,7 @@ class Creature:
                 r = int(self.speed*255/20)
                 if r >= 255:
                     r = 255
-                self.owner.color = color(r,g,b)
+                #self.owner.color = color(r,g,b)
             elif choice == 1:
                 self.senses += change*20
                 if self.senses <= 0:
@@ -180,7 +197,7 @@ class Creature:
                 g = int(self.senses*255/200)
                 if g >= 255:
                     g = 255
-                self.owner.color = color(r,g,b)
+                #self.owner.color = color(r,g,b)
             elif choice == 2:
                 self.owner.size +=change
                 self.health += change*HEALTH/10
@@ -192,24 +209,48 @@ class Creature:
                 b = int(self.owner.size*255/20)
                 if b >= 255:
                     b = 255
-                self.owner.color = color(r,g,b)
+                #self.owner.color = color(r,g,b)
             elif choice == 4:
-                selection = int(random(0,2))
-                if selection <= 1:
+                selection = int(random(0,9))
+                if selection <= 5:
                     if self.check_attribute('carnivore') == False:
                         self.attributes.append('carnivore')
                     else:
                         self.attributes.remove('carnivore')
-                elif selection == 2:
+                elif selection == 6:
                     if self.check_attribute('lazy') == False:
                         self.attributes.append('lazy')
                         print('new lazy creature')
+                elif selection <= 9:
+                    if self.check_attribute('horns') == False:
+                        self.attributes.append('horns')
+                        print('new horny creature')
                     else:
-                        self.attributes.remove('lazy')
+                        self.attributes.remove('horns')
+        if int(random(100)) <= MUTATION_CHANCE/2:
+            selection = int(random(0,5))
+            if selection == 1:
+                self.owner.color = colorred
+            elif selection == 2:
+                self.owner.color = colorgreen
+            elif selection == 3:
+                self.owner.color = coloryellow
+            elif selection == 4:
+                self.owner.color = colorblue
+                        
+    def updatesprite(self):
         if self.check_attribute('carnivore'):
-            self.owner.sprite = uwu100
+            if self.check_attribute('horns'):
+                self.owner.sprite = uwu110
+            else:
+                self.owner.sprite = uwu100
+                
         else:
-            self.owner.spirte = uwu000
+            if self.check_attribute('horns'):
+                self.owner.sprite = uwu010
+            else:
+                
+                self.owner.sprite = uwu000
                     
                         
         
