@@ -1,12 +1,12 @@
 noLoop()
-WIDTH = 700
+WIDTH = 1200
 HEIGHT = 700
-FOODAMOUNT = 10
+FOODAMOUNT = 20
 MAXOBJECTS = 100
 HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 400
+FOODINTERVAL = 300
 coloryellow = color(244,255,0)
 colorgreen = color(0,255,0)
 colorred = color(255,0,0)
@@ -53,7 +53,7 @@ def draw():
             image(obj.sprite, obj.x,obj.y,obj.size*4,obj.size*4)
         else:
             tint(255,255,255)
-            image(obj.sprite, obj.x,obj.y,obj.size*3,obj.size*3)
+            image(obj.sprite, obj.x,obj.y,obj.size*4,obj.size*4)
         if obj.creature and objects.count(obj) > 0:
                 
             obj.creature.take_turn()
@@ -63,12 +63,13 @@ def draw():
             place_food()
             counter = 0
     fill(0,20)
-    rect(width/2+30, 350, title.width, 300);
+    rectMode(CENTER)
+    rect(width/2+30, HEIGHT/2+30, title.width, title.height/2);
     image(title, width/2 ,300)
-    image(startBtn, width/2, height/1.5, startBtn.width / 3, startBtn.height / 3)
+    image(startBtn, width/2, height/1.4, startBtn.width / 3, startBtn.height / 3)
     
 def mouseClicked():
-    if WIDTH/2 - startBtn.width/2 < mouseX < WIDTH/2 + startBtn.width/2 and HEIGHT/2 - startBtn.height/2 < mouseY < HEIGHT/2 + startBtn.height/2:
+    if WIDTH/2 - startBtn.width/2 < mouseX < WIDTH/2 + startBtn.width/2 and HEIGHT/2 - startBtn.height/1.4 < mouseY < HEIGHT/1.4 + startBtn.height/2:
         loop()
         title.width=0
         startBtn.width=0
@@ -326,7 +327,7 @@ class Creature:
                         if self.check_attribute('chilling'):
                             self.attributes.remove('chilling')
                     elif obj.creature and self.check_attribute('carnivore'):
-                        if obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not owo.creature.check_attribute('carnivore')):
+                        if obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not obj.creature.check_attribute('carnivore')):
                             food = obj
                             closest_dist = dist(owo.x, owo.y, obj.x, obj.y)
                             self.target = [obj.x, obj.y]
@@ -361,7 +362,7 @@ class Creature:
         distance = dist(owo.x, owo.y, tx, ty)
         grabdist = 2
         if self.check_attribute('hands'):
-            grabdist +=1
+            grabdist +=2
         if distance < grabdist:
             for obj in objects:
                 if obj != owo:
@@ -370,7 +371,7 @@ class Creature:
                             self.eat(obj)
                             break
                         elif  obj.creature and self.check_attribute('carnivore'):
-                            if (obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not owo.creature.check_attribute('carnivore'))) and obj.creature.health > 0:
+                            if (obj.size < owo.size-1 or (self.check_attribute('hands') and obj.size <= owo.size and not obj.creature.check_attribute('carnivore'))) and obj.creature.health > 0:
                                 self.attack(obj)
                                 break
             self.find_target()
