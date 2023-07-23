@@ -73,7 +73,8 @@ def mouseClicked():
         loop()
         title.width=0
         startBtn.width=0
-    place_food()
+def mousePressed():
+    place_clickfood()
         
 def place_food(amount = FOODAMOUNT):
     if len(objects) >= MAXOBJECTS:
@@ -87,9 +88,15 @@ def place_food(amount = FOODAMOUNT):
             xfood = random(WIDTH/2-WIDTH/10,WIDTH/2+WIDTH/10)
             yfood = random(HEIGHT/2-HEIGHT/10,HEIGHT/2+HEIGHT/10)
             
-        colorfood = color(252,3,3)
+        colorfood = color(255,255,255)
         objects.append(Object(x = xfood,y = yfood,name = 'food',color = colorfood, size = 5))
         i += 1
+def place_clickfood():
+    colorfood = color(255,255,255)
+    xdiverge = random(-10,10)
+    ydiverge = random(-10,10)
+    objects.append(Object(x = mouseX+xdiverge,y = mouseY+ydiverge,name = 'food',color = colorfood, size = 5))
+    
     
 class Object:
     def __init__(self, x = WIDTH/2, y = HEIGHT/2, name = 'none', creature = None, color = color(255,255,255), size = 10, sprite = None):
@@ -360,7 +367,7 @@ class Creature:
         distx = tx - owo.x
         disty = ty - owo.y
         distance = dist(owo.x, owo.y, tx, ty)
-        grabdist = 2
+        grabdist = 3
         if self.check_attribute('hands'):
             grabdist +=2
         if distance < grabdist:
