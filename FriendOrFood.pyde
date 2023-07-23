@@ -1,12 +1,12 @@
 noLoop()
 WIDTH = 1200
 HEIGHT = 700
-FOODAMOUNT = 20
+FOODAMOUNT = 4
 MAXOBJECTS = 100
 HEALTH = 1600
 MUTATION_CHANCE = 25
 AUTOFOOD = True
-FOODINTERVAL = 300
+FOODINTERVAL = 80
 coloryellow = color(244,255,0)
 colorgreen = color(0,255,0)
 colorred = color(255,0,0)
@@ -169,7 +169,7 @@ class Creature:
             if self.check_attribute('hands'):
                 speedy -=1
             if self.check_attribute('carnivore'):
-                speedy +=1
+                speedy +=2
             if self.check_attribute('chilling'):
                     self.find_target()
                     if self.check_attribute('chilling'):
@@ -194,7 +194,7 @@ class Creature:
         
     def attack(self, target):
         if target.creature.check_attribute('horns'):
-            self.health -= self.base_health/4
+            self.health -= self.base_health/2
             
             print('ouch!')
             if self.health <= 0:
