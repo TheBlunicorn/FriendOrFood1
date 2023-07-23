@@ -83,7 +83,22 @@ class Object:
             self.creature.owner = self
             self.sprite = uwu000
         else:
-            self.sprite = foodpear
+            choice = int(random(0,8))
+            
+            if choice == 0:
+                self.sprite = foodpear
+            elif choice == 1:
+                self.sprite = foodapple
+            elif choice == 2:
+                self.sprite = foodblueberry
+            elif choice == 3:
+                self.sprite = foodcherry
+            elif choice == 4:
+                self.sprite = foodlemon
+            elif choice == 5:
+                self.sprite = foodorange
+            else:
+                self.sprite = foodstarfruit
 
 class Creature:
     def __init__(self,health = HEALTH, speed = 10, senses = 100, target = None, size = 10):
