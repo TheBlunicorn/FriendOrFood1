@@ -36,7 +36,7 @@ def setup():
     foodlemon = loadImage("data/IMG_FoF_lemon.PNG")
     foodorange = loadImage("data/IMG_FoF_orange.PNG")
     foodstarfruit = loadImage("data/IMG_FoF_starfruit.PNG")
-    f = createFont("Arial",16)
+    f = loadFont("ArcadeClassic-16.vlw")
     global objects
     size(WIDTH, HEIGHT)
     fill(0)
@@ -68,7 +68,7 @@ def draw():
     textFont(f,16)
     fill(0)
     get_name_under_mouse()
-    text(displayname,mouseX+20,mouseY+20)
+    text(displayname,mouseX+25,mouseY+25)
     fill(0,20)
     rectMode(CENTER)
     rect(width/2+30, HEIGHT/2+30, title.width, title.height/2);
