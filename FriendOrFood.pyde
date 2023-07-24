@@ -1,22 +1,24 @@
 noLoop()
-WIDTH = 1200
-HEIGHT = 700
-FOODAMOUNT = 5
-MAXOBJECTS = 100
-HEALTH = 1600
-MUTATION_CHANCE = 25
+WIDTH = 1600
+HEIGHT = 1000
+FOODAMOUNT = 12
+MAXOBJECTS = 200
+HEALTH = 4000
+MUTATION_CHANCE = 40
 AUTOFOOD = True
-FOODINTERVAL = 80
+FOODINTERVAL = 200
 coloryellow = color(244,255,0)
 colorgreen = color(0,255,0)
 colorred = color(255,0,0)
 colorblue = color(255,255,255)
+colorpink = color(252,3,207)
 objects = []
 counter = 0
 def setup():
     imageMode(CENTER)
-    global uwu000, uwu100, uwu010, uwu110, uwu001, uwu101, uwu011, uwu111, startBtn, title
+    global uwu000, uwu100, uwu010, uwu110, uwu001, uwu101, uwu011, uwu111, startBtn, title, f, displayname
     global foodpear, foodapple, foodblueberry, foodcherry, foodlemon, foodorange, foodstarfruit
+    displayname =''
     startBtn = loadImage("IMG_FoF_start.PNG")
     title = loadImage("IMG_FoF_title.PNG")
     uwu000 = loadImage("data/IMG_uwu_000.PNG")
@@ -34,18 +36,19 @@ def setup():
     foodlemon = loadImage("data/IMG_FoF_lemon.PNG")
     foodorange = loadImage("data/IMG_FoF_orange.PNG")
     foodstarfruit = loadImage("data/IMG_FoF_starfruit.PNG")
+    f = createFont("Arial",16)
     global objects
     size(WIDTH, HEIGHT)
     fill(0)
     noStroke()
     creature_component = Creature()
-    objects.append(Object(creature = creature_component))
+    objects.append(Object(name = 'Qualli',creature = creature_component))
     
     place_food()
     
 def draw():
     background(255)
-    global objects, counter
+    global objects, counter, f
     active_objects = objects
     for obj in active_objects:
         if obj.creature:
@@ -62,12 +65,25 @@ def draw():
         if counter >= FOODINTERVAL and len(objects) < MAXOBJECTS:
             place_food()
             counter = 0
+    textFont(f,16)
+    fill(0)
+    get_name_under_mouse()
+    text(displayname,mouseX+20,mouseY+20)
     fill(0,20)
     rectMode(CENTER)
     rect(width/2+30, HEIGHT/2+30, title.width, title.height/2);
     image(title, width/2 ,300)
     image(startBtn, width/2, height/1.4, startBtn.width / 3, startBtn.height / 3)
-    
+ 
+def get_name_under_mouse():
+    global displayname
+    x = mouseX
+    y = mouseY
+    for obj in objects:
+        if x-8 <= obj.x <= x+8 and y-8 <= obj.y <= y+8:
+            displayname = obj.name
+            return
+          
 def mouseClicked():
     if WIDTH/2 - startBtn.width/2 < mouseX < WIDTH/2 + startBtn.width/2 and HEIGHT/2 - startBtn.height/1.4 < mouseY < HEIGHT/1.4 + startBtn.height/2:
         loop()
@@ -127,7 +143,20 @@ class Object:
                 self.sprite = foodorange
             else:
                 self.sprite = foodstarfruit
-
+                
+    def get_name(self):
+        newname = ''
+        name1 = ['Fr','B','Gn','Schn','M','V','K','F','X','W','R','T','H','Qu','Kr','Sh','Ch','D','L','S','']
+        name2 = ['e','o','u','a','i','y','au','eu','oo','oi','ou','ei','uh','ee','ah','ae','ar','a','o','u','']
+        name3 = ['di','zo','da','lo','sha','ge','te','shi','fu','ki','kto','ge','li','phi','nu','ru','me','re','we','be','']
+        name4 = ['nand','bert','sam','ter','rk','l','r','gam','ner','pus','ger','le','m','lim','dil','bri','leon','lauch','tier','ling','']
+        newname += (name1[int(random(1,20))])
+        newname += (name2[int(random(1,20))])
+        newname += (name3[int(random(1,20))])
+        newname += (name4[int(random(1,20))])
+        print(newname)
+        self.name = newname
+        
 class Creature:
     def __init__(self,health = HEALTH, speed = 10, senses = 100, target = None, size = 10):
         self.attributes = []
@@ -151,7 +180,7 @@ class Creature:
 
    
     def calc_energy(self):
-        self.energy_loss = int((self.speed * self.speed * self.owner.size * self.senses)/25000)
+        self.energy_loss = int((self.speed * self.speed * self.owner.size * self.senses)/10000)
         if self.energy_loss <= 1:
             self.energy_loss = 1
             
@@ -173,8 +202,10 @@ class Creature:
             if self.check_attribute('chilling'):
                     self.find_target()
                     if self.check_attribute('chilling'):
-                        self.health += int(self.energy_loss/2)
-                        energy = energy*2/3
+                        #self.health += int(self.energy_loss/2)
+                        energy = int(energy*2/3)
+                        if energy <1:
+                            energy = 1
                         speedy = 1
             self.initiative += speedy
             while self.initiative >= 10:
@@ -196,9 +227,9 @@ class Creature:
         if target.creature.check_attribute('horns'):
             self.health -= self.base_health/2
             
-            print('ouch!')
             if self.health <= 0:
                 self.health = 0
+                print('ouch!')
                 return
         target.creature.health = 0
         print('creature eaten')
@@ -212,7 +243,7 @@ class Creature:
         if len(objects) >= MAXOBJECTS:
             return
         creature_component = Creature(health = self.base_health, speed = self.speed, senses = self.senses, size = self.owner.size)
-        newowo = Object(x = self.owner.x, y = self.owner.y, creature = creature_component,color = self.owner.color, size = self.owner.size)
+        newowo = Object(x = self.owner.x, y = self.owner.y, name = self.owner.name, creature = creature_component,color = self.owner.color, size = self.owner.size)
         for obj in self.attributes:
             newowo.creature.attributes.append(obj)
         newowo.creature.mutate()
@@ -259,6 +290,7 @@ class Creature:
                 #self.owner.color = color(r,g,b)
             elif choice == 4:
                 selection = int(random(0,11))
+                self.owner.get_name()
                 if selection <= 5:
                     if self.check_attribute('carnivore') == False:
                         self.attributes.append('carnivore')
@@ -281,7 +313,8 @@ class Creature:
                     else:
                         self.attributes.remove('hands')
         if int(random(100)) <= MUTATION_CHANCE/2:
-            selection = int(random(0,5))
+            self.owner.get_name()
+            selection = int(random(0,6))
             if selection == 1:
                 self.owner.color = colorred
             elif selection == 2:
@@ -290,6 +323,8 @@ class Creature:
                 self.owner.color = coloryellow
             elif selection == 4:
                 self.owner.color = colorblue
+            elif selection == 5:
+                self.owner.color = colorpink
                         
     def updatesprite(self):
         if self.check_attribute('carnivore'):
